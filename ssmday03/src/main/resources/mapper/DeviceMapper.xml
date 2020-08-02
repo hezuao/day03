@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoshu.dao.DeviceMapper">
+  <resultMap id="BaseResultMap" type="com.xiaoshu.entity.Device">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="deviceid" jdbcType="INTEGER" property="deviceid" />
+    <result column="type_id" jdbcType="INTEGER" property="typeId" />
+    <result column="device_name" jdbcType="VARCHAR" property="deviceName" />
+    <result column="device_ram" jdbcType="VARCHAR" property="deviceRam" />
+    <result column="color" jdbcType="VARCHAR" property="color" />
+    <result column="price" jdbcType="INTEGER" property="price" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="createtime" jdbcType="TIMESTAMP" property="createtime" />
+    <association property="type" javaType="com.xiaoshu.entity.Type">
+    	<id column="device_type_id" jdbcType="INTEGER" property="deviceTypeId" />
+    	<result column="type_name" jdbcType="VARCHAR" property="typeName"/>
+    </association>
+  </resultMap>
+  <select id="findAll" parameterType="com.xiaoshu.entity.Device" resultMap="BaseResultMap">
+   	SELECT * FROM  tb_device t,device_type d WHERE t.type_id=d.device_type_id
+      	<where>
+      		<if test="deviceName!=null and deviceName!=''">
+                tb_device.device_name like '%${deviceName}%'
+            </if>
+            <if test="status!=null and status!=''">
+                and tb_device.status like '%${status}%'
+            </if>
+      	</where>
+  </select>
+    <select id="findByName" parameterType="String" resultType="com.xiaoshu.entity.Device">
+  	select * from tb_device where device_name=#{device_name}
+  </select>
+  <select id="echarts" resultType="com.xiaoshu.entity.Device">
+ 		select count(d.deviceid) num,t.type_name type_name from tb_device d right join device_type t on d.type_id=t.device_type_id group by t.type_name
+ 	</select>
+  
+</mapper>
